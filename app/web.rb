@@ -9,12 +9,20 @@ class Web < Sinatra::Base
 
   error do
     exception = env['sinatra.error']
-    status 500
+    if exception.class == MongoMapper::DocumentNotFound
+      status 404
+    else
+      status 500
+    end
     { :error => { :message => exception.message } }.to_json
   end
 
+  get '/' do
+    'hello'
+  end
+
   get '/search' do
-    Article.first(:url => params['url']).to_json(:except => [:id, :article_index_id, :type])
+    Article.find_by_url!(params['url']).to_json(:except => [:id, :article_index_id, :type])
   end
 
 end

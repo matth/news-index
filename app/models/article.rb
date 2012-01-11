@@ -22,6 +22,7 @@ class Article
   safe
 
   ensure_index [[:article_index_id, 1]], :unique => true
+  ensure_index [[:url, 1]], :unique => true
 
   many :images
   many :videos
