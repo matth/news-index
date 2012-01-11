@@ -77,7 +77,10 @@ module DataExtractor
     end
 
     def thumbnail
-      @thumbnail ||= html.xpath('//meta[@property="og:image"]/@content').first.value
+      @thumbnail ||= begin
+        img = html.xpath('//meta[@property="og:image"]/@content')
+        img.empty? ? nil : img.first.value
+      end
     end
 
     def related_links
