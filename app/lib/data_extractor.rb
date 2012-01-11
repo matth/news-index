@@ -1,5 +1,17 @@
 module DataExtractor
 
+  def self.extract(html)
+    if !html.scan(/emp-decription/).empty?
+      VideoDocument.new(html)
+    elsif !html.scan(/id="pictureGallery"/).empty?
+      PictureGalleryDocument.new(html)
+    elsif !html.scan(/class="story-body"/).empty?
+      ArticleDocument.new(html)
+    else
+      raise "Unknown type for #{url}"
+    end
+  end
+
   class Video
     attr_accessor :playlist, :width, :height, :holding_image, :external_id
     def initialize(playlist, width, height, holding_image, external_id)
@@ -30,7 +42,7 @@ module DataExtractor
 
   class Document
 
-    attr_accessor :html
+    attr_accessor :html, :type
 
     def initialize(html)
       @html = Nokogiri::HTML.parse(html)
@@ -61,11 +73,18 @@ module DataExtractor
     end
 
     def cps_id
-      @cps_d ||= html.xpath('//meta[@name="CPS_ID"]/@content').first.value
+      @cps_id ||= html.xpath('//meta[@name="CPS_ID"]/@content').first.value
     end
 
     def thumbnail
       @thumbnail ||= html.xpath('//meta[@property="og:image"]/@content').first.value
+    end
+
+    def related_links
+      @related_links ||= html.xpath('//ul[@class="related-links-list"]/li/a/@href').map do |href|
+        href.value if href.value =~ /^http\:\/\//
+        "http://www.bbc.co.uk" + href.value
+      end.compact
     end
 
     def images
@@ -98,6 +117,38 @@ module DataExtractor
       end
     end
 
+  end
+
+  class ArticleDocument < Document
+    def body
+      @body ||= begin
+        html.xpath('//*[@class="story-body"]/p').reject do |ptag|
+          !ptag.xpath('a').empty? && ptag.xpath('a/@href').first.value =~ /\/modules\/sharetools\/share/
+        end.map do |ptag|
+          "<p>#{ptag.inner_html.strip}</p>"
+        end.join("\n").strip
+      end
+    end
+  end
+
+  class VideoDocument < Document
+    def body
+      @body ||= begin
+        html.xpath('//div[@class="emp-decription"]/p').map do |ptag|
+          "<p>#{ptag.inner_html.strip}</p>"
+        end.join("\n").strip
+      end
+    end
+  end
+
+  class PictureGalleryDocument < Document
+    def body
+      @body ||= begin
+        html.xpath('//ul[@id="gallery"]/li/span[@class="picGalCaption"]').map do |ptag|
+          "<p>#{ptag.inner_html.strip}</p>"
+        end.join("\n").strip
+      end
+    end
   end
 
 end
