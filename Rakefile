@@ -23,3 +23,9 @@ task :queue_indicies do
     end
   end
 end
+
+task :counts do
+  p ArticleHtml.count
+  res = StoryBodyCounter.build.find()
+  p res
+end

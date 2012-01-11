@@ -8,6 +8,10 @@ test:
   host: localhost
   port: 27017
 
+production:
+  database: news_index_development
+  host: localhost
+  port: 27017
 # development:
 #   adapter: mysql2
 #   encoding: utf8

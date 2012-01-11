@@ -10,6 +10,7 @@ gem 'bson_ext'
 gem 'typhoeus'
 gem 'tzinfo'
 gem 'activesupport', '~> 3.0.9', :require => 'active_support/all'
+gem 'nokogiri'
 
 group :development, :test do
   gem 'rack-test', :require => 'rack/test'

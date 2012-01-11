@@ -10,6 +10,7 @@ Encoding.default_internal, Encoding.default_external = ['utf-8'] * 2
 # DB Config
 RACK_ENV ||= ENV["RACK_ENV"] || "development"
 LOGGER   = Logger.new($stdout)
+LOGGER.level = Logger::WARN
 dbconfig = YAML.load(File.read("config/database.yml"))[RACK_ENV]
 MongoMapper.connection = Mongo::Connection.new(dbconfig['host'] || 'localhost', dbconfig['port'] || 27017, :logger => LOGGER)
 MongoMapper.database   = dbconfig['database']
