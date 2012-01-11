@@ -11,12 +11,16 @@ class ArticleIndex
   one :article_html
   one :article
 
+  safe
+
+  ensure_index [[:url, 1]], :unique => true
+
   def create_article_from_data
     raise "No associated html object for #{self.url}" if self.article_html.nil?
     if self.article.nil?
       article = Article.new_from_html(self.article_html.html)
       self.article = article
-      article.article_index = self
+      article.article_index_id = self.id
       article.save
       self.save
     else
@@ -30,10 +34,11 @@ class ArticleIndex
     if self.article_html.nil?
       self.article_html = html
       self.save
+      html.save
     else
       self.article_html.html = html.html
+      self.article_html.save
       self.save
-      html.save
     end
   end
 

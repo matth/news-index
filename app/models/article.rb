@@ -19,6 +19,10 @@ class Article
 
   belongs_to :article_index
 
+  safe
+
+  ensure_index [[:article_index_id, 1]], :unique => true
+
   many :images
   many :videos
 
@@ -43,7 +47,6 @@ class Article
       self.videos << Video.new(:playlist => v.playlist, :width => v.width, :height => v.height, :holding_image => v.holding_image, :external_id => v.external_id)
     end
 
-    self.save
   end
 
 end

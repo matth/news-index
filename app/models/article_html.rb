@@ -4,6 +4,10 @@ class ArticleHtml
   validates_presence_of :html
   belongs_to :article_index
 
+  safe
+
+  ensure_index [[:article_index_id, 1]], :unique => true
+
   def self.new_from_webpage(url)
     resp = http.get(url)
     if resp.code == 200

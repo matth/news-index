@@ -11,4 +11,8 @@ class Image
 
   belongs_to :article
 
+  def serializable_hash(options = {})
+    super({:except => [:id, :article_id]}.merge(options))
+  end
+
 end
