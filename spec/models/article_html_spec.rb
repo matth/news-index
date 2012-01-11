@@ -5,7 +5,7 @@ describe ArticleHtml do
 
   it { should validate_presence_of(:html) }
 
-  it "should have belong to ArticleIndex" do
+  it "should belong to ArticleIndex" do
     ArticleHtml.new.respond_to?(:article_index_id).should == true
   end
 
