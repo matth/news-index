@@ -149,6 +149,17 @@ module DataExtractor
         end.join("\n").strip
       end
     end
+
+    def images
+      @images ||= begin
+        html.xpath('//ul[@id="gallery"]/li/a').map do |atag|
+          url = atag.xpath('@href').first.value
+          description = atag.xpath('img/@alt').empty? ? nil : atag.xpath('img/@alt').first.value
+          Image.new(url, 0, 0, description)
+        end
+      end
+    end
+
   end
 
 end

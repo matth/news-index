@@ -171,6 +171,9 @@ describe DataExtractor::PictureGalleryDocument do
    ].join("\n")
   end
   it "should extract images correctly" do
-    pending
+    images = DataExtractor::PictureGalleryDocument.new(html("picture_gallery")).images
+    images.size.should == 10
+    images.first.url.should == "http://news.bbcimg.co.uk/media/images/57817000/jpg/_57817107_013675006-1.jpg"
+    images.first.description.should ==  "Models on a catwalk "
   end
 end
